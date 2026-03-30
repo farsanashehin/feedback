@@ -10,17 +10,14 @@ const AddFeedback = () => {
 
   const [courseId, setCourseId] = useState(editingFeedback?.courseId || '');
   const [courseName, setCourseName] = useState(editingFeedback?.courseName || '');
-  const [courseDuration, setCourseDuration] = useState(editingFeedback?.courseDuration || '');
   const [feedbackComments, setFeedbackComments] = useState(editingFeedback?.feedbackComments || '');
   const [feedbackRating, setFeedbackRating] = useState(editingFeedback?.feedbackRating || 1);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     if (editingFeedback) {
       setCourseId(editingFeedback.courseId);
       setCourseName(editingFeedback.courseName);
-      setCourseDuration(editingFeedback.courseDuration);
       setFeedbackComments(editingFeedback.feedbackComments);
       setFeedbackRating(editingFeedback.feedbackRating);
     }
@@ -28,25 +25,21 @@ const AddFeedback = () => {
 
   const resetForm = () => {
     setCourseName('');
-    setCourseDuration('');
     setFeedbackComments('');
     setFeedbackRating(1);
     setCourseId('');
     setError('');
-    setSuccess('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!courseName || !feedbackComments || !feedbackRating) {
       setError('Please complete all required fields');
-      setSuccess('');
       return;
     }
 
     const payload = {
       courseName,
-      courseDuration: courseDuration || 'Not specified',
       feedbackComments,
       feedbackRating,
     };
@@ -54,10 +47,8 @@ const AddFeedback = () => {
     try {
       if (editingFeedback) {
         await axios.put(`http://localhost:5000/api/feedbacks/${editingFeedback._id}`, payload);
-        setSuccess('Feedback updated successfully. Redirecting...');
       } else {
         await axios.post('http://localhost:5000/api/feedbacks', payload);
-        setSuccess('Feedback added successfully. Redirecting...');
       }
       setError('');
       setTimeout(() => {
@@ -65,7 +56,6 @@ const AddFeedback = () => {
       }, 900);
     } catch (err) {
       setError('Unable to save feedback. Please try again.');
-      setSuccess('');
     }
   };
 
@@ -73,7 +63,6 @@ const AddFeedback = () => {
     <Card className="p-4 shadow-sm">
       <h2>{editingFeedback ? 'Edit Feedback' : 'Add Feedback'}</h2>
       {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="courseName">
           <Form.Label>Course Name</Form.Label>
@@ -83,16 +72,6 @@ const AddFeedback = () => {
             onChange={(e) => setCourseName(e.target.value)}
             placeholder="Enter course name"
             required
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="courseDuration">
-          <Form.Label>Course Duration</Form.Label>
-          <Form.Control
-            type="text"
-            value={courseDuration}
-            onChange={(e) => setCourseDuration(e.target.value)}
-            placeholder="Enter duration (e.g., 4 weeks)"
           />
         </Form.Group>
 
@@ -115,11 +94,11 @@ const AddFeedback = () => {
             onChange={(e) => setFeedbackRating(Number(e.target.value))}
             required
           >
-            <option value={1}>1 - Poor</option>
-            <option value={2}>2 - Fair</option>
-            <option value={3}>3 - Good</option>
-            <option value={4}>4 - Very Good</option>
-            <option value={5}>5 - Excellent</option>
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+            <option value={5}>5</option>
           </Form.Select>
         </Form.Group>
 
